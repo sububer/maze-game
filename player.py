@@ -9,10 +9,7 @@ class Player:
         self.width = 0
 
     def draw(self, surface):
-        pygame.draw.circle(surface, self.color, (cfg.PADDING, cfg.MASTHEAD + cfg.PADDING) * 3, self.radius)
+        pygame.draw.circle(surface, self.color, (cfg.PADDING * 3, cfg.MASTHEAD + cfg.PADDING * 3), self.radius)
     
     def move(self):
-        pass
-
-    def draw(self):
         pass

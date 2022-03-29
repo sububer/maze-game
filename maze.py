@@ -36,7 +36,7 @@ class Maze():
         pygame.draw.line(surface, color, (cfg.PADDING, cfg.MASTHEAD + cfg.PADDING), (cfg.PADDING, cfg.HEIGHT - cfg.PADDING), 5)
 
         for column in range(cfg.MAZE_COLS):
-            x_pos = column + cfg.PADDING + (1 + column) * (cfg.WIDTH - (2 * cfg.PADDING))//cfg.MAZE_COLS
+            x_pos = cfg.PADDING + ((column + 1) * (cfg.WIDTH - (2 * cfg.PADDING))//cfg.MAZE_COLS)
             pygame.draw.line(surface, color, (x_pos, cfg.MASTHEAD + cfg.PADDING), (x_pos, cfg.HEIGHT - cfg.PADDING), 5)
 
 
@@ -44,5 +44,5 @@ class Maze():
         pygame.draw.line(surface, color, (cfg.PADDING, cfg.MASTHEAD + cfg.PADDING), (cfg.WIDTH  - cfg.PADDING, cfg.MASTHEAD + cfg.PADDING), 5)
 
         for row in range(cfg.MAZE_ROWS):
-            y_pos = row + cfg.MASTHEAD + cfg.PADDING + (1 + row) * (cfg.HEIGHT - cfg.MASTHEAD - cfg.PADDING)//cfg.MAZE_ROWS
+            y_pos = cfg.MASTHEAD + cfg.PADDING + ((1 + row) * (cfg.HEIGHT - cfg.MASTHEAD - (2 * cfg.PADDING))//cfg.MAZE_ROWS)
             pygame.draw.line(surface, color, (cfg.PADDING, y_pos), (cfg.WIDTH - cfg.PADDING, y_pos), 5)
