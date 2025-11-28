@@ -6,13 +6,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A maze game built with Pygame featuring random maze generation, multiple difficulty levels, and player navigation.
 
-## Running the Game
+## Commands
 
 ```bash
-python game.py
-```
+# Install dependencies
+uv sync
 
-Requires `pygame` package.
+# Install with dev dependencies (for testing)
+uv sync --extra dev
+
+# Run the game
+uv run python game.py
+
+# Run tests
+uv run pytest
+
+# Run tests with coverage
+uv run pytest --cov=. --cov-report=term-missing
+```
 
 ## Architecture
 
