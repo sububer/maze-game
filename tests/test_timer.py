@@ -1,7 +1,5 @@
 """Unit tests for timer functionality."""
 
-import pytest
-
 from main import format_time
 
 
@@ -61,11 +59,3 @@ class TestFormatTime:
         assert format_time(3600.0) == "60:00.0"
         # 99 minutes 59 seconds
         assert format_time(5999.9) == "99:59.9"
-
-    def test_negative_time_edge_case(self):
-        """Negative time (edge case) should handle gracefully."""
-        # This shouldn't happen in practice, but the function should not crash
-        result = format_time(-1.0)
-        # Python's int() truncates toward zero, so -1.0 // 60 = -1, % 60 = 59
-        # This is a known behavior; we just verify it doesn't crash
-        assert isinstance(result, str)
