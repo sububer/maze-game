@@ -16,18 +16,24 @@ uv sync
 uv sync --extra dev
 
 # Run the game
-uv run python game.py
+uv run python main.py
 
 # Run tests
 uv run pytest
 
 # Run tests with coverage
 uv run pytest --cov --cov-report=term-missing
+
+# Run in browser (local dev server at localhost:8000)
+uv run pygbag .
+
+# Build for web deployment
+uv run pygbag --build .
 ```
 
 ## Architecture
 
-- **game.py** - Main entry point with game state machine (MENU → PLAYING → WON)
+- **main.py** - Main entry point with game state machine (MENU → PLAYING → WON), async for pygbag web support
 - **maze.py** - `Maze` class with recursive backtracking generation, `Cell` dataclass for wall representation, `Difficulty` enum for presets
 - **player.py** - `Player` class with grid-based position and movement
 - **menu.py** - `Menu` class for difficulty selection screen
