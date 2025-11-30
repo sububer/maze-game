@@ -236,7 +236,10 @@ async def main():
                 )
             player.draw(display_surface, maze)
             # Calculate final elapsed time
-            elapsed = timer_end - timer_start if timer_start is not None and timer_end is not None else 0.0
+            if timer_start is not None and timer_end is not None:
+                elapsed = timer_end - timer_start
+            else:
+                elapsed = 0.0
             draw_timer(display_surface, elapsed)
             draw_win_screen(display_surface, elapsed)
 
