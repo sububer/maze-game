@@ -59,7 +59,7 @@ uv run pytest
 uv run pytest -v
 
 # Run with coverage report
-uv run pytest --cov=. --cov-report=term-missing
+uv run pytest --cov --cov-report=term-missing
 ```
 
 ### Project Structure

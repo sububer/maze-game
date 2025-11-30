@@ -1,7 +1,6 @@
 """Unit tests for the maze module."""
 
 import random
-import pytest
 from maze import Cell, Difficulty, Maze, DIFFICULTY_SETTINGS
 
 
@@ -11,21 +10,21 @@ class TestCell:
     def test_default_walls_all_true(self):
         """New cell should have all walls by default."""
         cell = Cell()
-        assert cell.top is True
-        assert cell.right is True
-        assert cell.bottom is True
-        assert cell.left is True
-        assert cell.visited is False
+        assert cell.top
+        assert cell.right
+        assert cell.bottom
+        assert cell.left
+        assert not cell.visited
 
     def test_wall_modification(self):
         """Walls can be modified."""
         cell = Cell()
         cell.top = False
         cell.right = False
-        assert cell.top is False
-        assert cell.right is False
-        assert cell.bottom is True
-        assert cell.left is True
+        assert not cell.top
+        assert not cell.right
+        assert cell.bottom
+        assert cell.left
 
 
 class TestDifficulty:
@@ -78,10 +77,10 @@ class TestMazeInitialization:
         maze = Maze(Difficulty.EASY)
         for row in maze.cells:
             for cell in row:
-                assert cell.top is True
-                assert cell.right is True
-                assert cell.bottom is True
-                assert cell.left is True
+                assert cell.top
+                assert cell.right
+                assert cell.bottom
+                assert cell.left
 
 
 class TestMazeGeneration:
@@ -93,7 +92,7 @@ class TestMazeGeneration:
         maze.generate()
         for row in maze.cells:
             for cell in row:
-                assert cell.visited is True
+                assert cell.visited
 
     def test_maze_is_solvable(self):
         """Generated maze should have a path from start to goal."""
@@ -146,15 +145,15 @@ class TestMovementValidation:
         """Invalid direction string should return False."""
         maze = Maze(Difficulty.EASY)
         maze.generate()
-        assert maze.is_valid_move((0, 0), 'invalid') is False
+        assert not maze.is_valid_move((0, 0), 'invalid')
 
     def test_wall_blocks_move(self):
         """Movement should be blocked when wall exists."""
         maze = Maze(Difficulty.EASY)
         # Don't generate - all walls intact
         # Top-left cell with all walls should block all moves
-        assert maze.is_valid_move((0, 0), 'up') is False
-        assert maze.is_valid_move((0, 0), 'left') is False
+        assert not maze.is_valid_move((0, 0), 'up')
+        assert not maze.is_valid_move((0, 0), 'left')
 
     def test_passage_allows_move(self):
         """Movement should be allowed when no wall."""
@@ -162,29 +161,29 @@ class TestMovementValidation:
         # Manually remove a wall
         maze.cells[0][0].right = False
         maze.cells[0][1].left = False
-        assert maze.is_valid_move((0, 0), 'right') is True
+        assert maze.is_valid_move((0, 0), 'right')
 
     def test_out_of_bounds_returns_false(self):
         """Out of bounds positions should return False."""
         maze = Maze(Difficulty.EASY)
         maze.generate()
-        assert maze.is_valid_move((-1, 0), 'up') is False
-        assert maze.is_valid_move((maze.rows, 0), 'down') is False
-        assert maze.is_valid_move((0, -1), 'left') is False
-        assert maze.is_valid_move((0, maze.cols), 'right') is False
+        assert not maze.is_valid_move((-1, 0), 'up')
+        assert not maze.is_valid_move((maze.rows, 0), 'down')
+        assert not maze.is_valid_move((0, -1), 'left')
+        assert not maze.is_valid_move((0, maze.cols), 'right')
 
     def test_boundary_moves_blocked(self):
         """Moves at maze boundary should be blocked even without wall."""
         maze = Maze(Difficulty.EASY)
         maze.generate()
         # Top row can't move up
-        assert maze.is_valid_move((0, 0), 'up') is False
+        assert not maze.is_valid_move((0, 0), 'up')
         # Left column can't move left
-        assert maze.is_valid_move((0, 0), 'left') is False
+        assert not maze.is_valid_move((0, 0), 'left')
         # Bottom row can't move down
-        assert maze.is_valid_move((maze.rows - 1, 0), 'down') is False
+        assert not maze.is_valid_move((maze.rows - 1, 0), 'down')
         # Right column can't move right
-        assert maze.is_valid_move((0, maze.cols - 1), 'right') is False
+        assert not maze.is_valid_move((0, maze.cols - 1), 'right')
 
 
 class TestBFSDistances:

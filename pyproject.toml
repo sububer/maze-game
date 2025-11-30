@@ -19,5 +19,5 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 
 [tool.coverage.run]
-source = ["maze", "player", "menu", "config", "utils"]
+source = ["maze", "player", "menu", "config"]
 omit = ["tests/*", ".venv/*"]

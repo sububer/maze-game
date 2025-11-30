@@ -1,9 +1,41 @@
 """Integration tests for maze-game modules working together."""
 
 import random
-import pytest
+from collections import deque
 from maze import Maze, Difficulty
 from player import Player
+
+
+def _find_path_bfs(maze, start_pos, goal_pos):
+    """Find path from start to goal using BFS.
+
+    Returns list of directions or None if no path exists.
+    """
+    visited = {start_pos}
+    queue = deque([(start_pos, [])])
+
+    while queue:
+        pos, path = queue.popleft()
+        if pos == goal_pos:
+            return path
+
+        for direction in ['up', 'down', 'left', 'right']:
+            if maze.is_valid_move(pos, direction):
+                row, col = pos
+                if direction == 'up':
+                    new_pos = (row - 1, col)
+                elif direction == 'down':
+                    new_pos = (row + 1, col)
+                elif direction == 'left':
+                    new_pos = (row, col - 1)
+                else:
+                    new_pos = (row, col + 1)
+
+                if new_pos not in visited:
+                    visited.add(new_pos)
+                    queue.append((new_pos, path + [direction]))
+
+    return None
 
 
 class TestPlayerNavigationInMaze:
@@ -45,34 +77,7 @@ class TestPlayerNavigationInMaze:
         player = Player(maze.start_pos)
 
         # Use BFS to find path to goal
-        from collections import deque
-
-        visited = {player.position}
-        queue = deque([(player.position, [])])
-
-        path = None
-        while queue:
-            pos, moves = queue.popleft()
-            if pos == maze.goal_pos:
-                path = moves
-                break
-
-            for direction in ['up', 'down', 'left', 'right']:
-                if maze.is_valid_move(pos, direction):
-                    # Calculate new position
-                    row, col = pos
-                    if direction == 'up':
-                        new_pos = (row - 1, col)
-                    elif direction == 'down':
-                        new_pos = (row + 1, col)
-                    elif direction == 'left':
-                        new_pos = (row, col - 1)
-                    else:
-                        new_pos = (row, col + 1)
-
-                    if new_pos not in visited:
-                        visited.add(new_pos)
-                        queue.append((new_pos, moves + [direction]))
+        path = _find_path_bfs(maze, player.position, maze.goal_pos)
 
         # Path should exist
         assert path is not None
@@ -173,34 +178,7 @@ class TestGameplayScenarios:
         player = Player(maze.start_pos)
 
         # Find solution path using BFS
-        from collections import deque
-
-        visited = {player.position}
-        queue = deque([(player.position, [])])
-        solution_path = None
-
-        while queue:
-            pos, path = queue.popleft()
-            if pos == maze.goal_pos:
-                solution_path = path
-                break
-
-            for direction in ['up', 'down', 'left', 'right']:
-                if maze.is_valid_move(pos, direction):
-                    row, col = pos
-                    if direction == 'up':
-                        new_pos = (row - 1, col)
-                    elif direction == 'down':
-                        new_pos = (row + 1, col)
-                    elif direction == 'left':
-                        new_pos = (row, col - 1)
-                    else:
-                        new_pos = (row, col + 1)
-
-                    if new_pos not in visited:
-                        visited.add(new_pos)
-                        queue.append((new_pos, path + [direction]))
-
+        solution_path = _find_path_bfs(maze, player.position, maze.goal_pos)
         assert solution_path is not None
 
         # Play through the solution

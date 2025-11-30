@@ -22,7 +22,7 @@ uv run python game.py
 uv run pytest
 
 # Run tests with coverage
-uv run pytest --cov=. --cov-report=term-missing
+uv run pytest --cov --cov-report=term-missing
 ```
 
 ## Architecture

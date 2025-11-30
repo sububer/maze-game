@@ -1,6 +1,5 @@
 """Unit tests for the player module."""
 
-import pytest
 from player import Player
 import config as cfg
 
