@@ -1,9 +1,11 @@
-import pygame
 from enum import Enum
+
+import pygame
+
 import config as cfg
-from maze import Maze, Difficulty
-from player import Player
+from maze import Maze
 from menu import Menu
+from player import Player
 
 
 class GameState(Enum):
@@ -15,7 +17,7 @@ class GameState(Enum):
 pygame.init()
 
 display_surface = pygame.display.set_mode((cfg.WIDTH, cfg.HEIGHT))
-pygame.display.set_caption('MazeGame')
+pygame.display.set_caption("MazeGame")
 
 clock = pygame.time.Clock()
 
@@ -36,7 +38,9 @@ def draw_win_screen(surface: pygame.Surface) -> None:
     surface.blit(win_text, win_rect)
 
     # Instructions
-    hint_text = font_medium.render("Press R to play again, ESC for menu", True, cfg.WHITE)
+    hint_text = font_medium.render(
+        "Press R to play again, ESC for menu", True, cfg.WHITE
+    )
     hint_rect = hint_text.get_rect(center=(cfg.WIDTH // 2, cfg.HEIGHT // 2 + 50))
     surface.blit(hint_text, hint_rect)
 
@@ -55,7 +59,7 @@ def main():
 
             if state == GameState.MENU:
                 result = menu.handle_event(event)
-                if result == 'start':
+                if result == "start":
                     # Start new game with selected difficulty
                     maze = Maze(menu.selected_difficulty)
                     maze.generate()
@@ -66,13 +70,13 @@ def main():
                 if event.type == pygame.KEYDOWN:
                     direction = None
                     if event.key == pygame.K_LEFT:
-                        direction = 'left'
+                        direction = "left"
                     elif event.key == pygame.K_RIGHT:
-                        direction = 'right'
+                        direction = "right"
                     elif event.key == pygame.K_UP:
-                        direction = 'up'
+                        direction = "up"
                     elif event.key == pygame.K_DOWN:
-                        direction = 'down'
+                        direction = "down"
                     elif event.key == pygame.K_r:
                         # Restart with same difficulty
                         maze = Maze(menu.selected_difficulty)
@@ -120,5 +124,5 @@ def main():
     pygame.quit()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

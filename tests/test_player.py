@@ -1,7 +1,7 @@
 """Unit tests for the player module."""
 
-from player import Player
 import config as cfg
+from player import Player
 
 
 class TestPlayerInitialization:
@@ -31,45 +31,45 @@ class TestPlayerMovement:
     def test_move_up_decrements_row(self):
         """Moving up should decrement row."""
         player = Player((5, 5))
-        player.move('up')
+        player.move("up")
         assert player.row == 4
         assert player.col == 5
 
     def test_move_down_increments_row(self):
         """Moving down should increment row."""
         player = Player((5, 5))
-        player.move('down')
+        player.move("down")
         assert player.row == 6
         assert player.col == 5
 
     def test_move_left_decrements_col(self):
         """Moving left should decrement column."""
         player = Player((5, 5))
-        player.move('left')
+        player.move("left")
         assert player.row == 5
         assert player.col == 4
 
     def test_move_right_increments_col(self):
         """Moving right should increment column."""
         player = Player((5, 5))
-        player.move('right')
+        player.move("right")
         assert player.row == 5
         assert player.col == 6
 
     def test_invalid_direction_no_change(self):
         """Invalid direction should not change position."""
         player = Player((5, 5))
-        player.move('invalid')
+        player.move("invalid")
         assert player.row == 5
         assert player.col == 5
 
     def test_multiple_moves(self):
         """Multiple moves should accumulate correctly."""
         player = Player((5, 5))
-        player.move('up')
-        player.move('right')
-        player.move('down')
-        player.move('left')
+        player.move("up")
+        player.move("right")
+        player.move("down")
+        player.move("left")
         # Should be back at start
         assert player.row == 5
         assert player.col == 5
@@ -86,5 +86,5 @@ class TestPlayerPosition:
     def test_position_updates_after_move(self):
         """Position should reflect movement."""
         player = Player((5, 5))
-        player.move('up')
+        player.move("up")
         assert player.position == (4, 5)

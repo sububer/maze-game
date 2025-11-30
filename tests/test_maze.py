@@ -1,7 +1,8 @@
 """Unit tests for the maze module."""
 
 import random
-from maze import Cell, Difficulty, Maze, DIFFICULTY_SETTINGS
+
+from maze import DIFFICULTY_SETTINGS, Cell, Difficulty, Maze
 
 
 class TestCell:
@@ -119,7 +120,7 @@ class TestMazeGeneration:
         max_dist = max(distances.values())
         goal_dist = distances[maze.goal_pos]
 
-        # Goal should be at least 50% of max (slightly relaxed from 60% for test stability)
+        # Goal should be at least 50% of max (relaxed from 60% for test stability)
         assert goal_dist >= max_dist * 0.5
 
     def test_walls_removed_during_generation(self):
@@ -145,15 +146,15 @@ class TestMovementValidation:
         """Invalid direction string should return False."""
         maze = Maze(Difficulty.EASY)
         maze.generate()
-        assert not maze.is_valid_move((0, 0), 'invalid')
+        assert not maze.is_valid_move((0, 0), "invalid")
 
     def test_wall_blocks_move(self):
         """Movement should be blocked when wall exists."""
         maze = Maze(Difficulty.EASY)
         # Don't generate - all walls intact
         # Top-left cell with all walls should block all moves
-        assert not maze.is_valid_move((0, 0), 'up')
-        assert not maze.is_valid_move((0, 0), 'left')
+        assert not maze.is_valid_move((0, 0), "up")
+        assert not maze.is_valid_move((0, 0), "left")
 
     def test_passage_allows_move(self):
         """Movement should be allowed when no wall."""
@@ -161,29 +162,29 @@ class TestMovementValidation:
         # Manually remove a wall
         maze.cells[0][0].right = False
         maze.cells[0][1].left = False
-        assert maze.is_valid_move((0, 0), 'right')
+        assert maze.is_valid_move((0, 0), "right")
 
     def test_out_of_bounds_returns_false(self):
         """Out of bounds positions should return False."""
         maze = Maze(Difficulty.EASY)
         maze.generate()
-        assert not maze.is_valid_move((-1, 0), 'up')
-        assert not maze.is_valid_move((maze.rows, 0), 'down')
-        assert not maze.is_valid_move((0, -1), 'left')
-        assert not maze.is_valid_move((0, maze.cols), 'right')
+        assert not maze.is_valid_move((-1, 0), "up")
+        assert not maze.is_valid_move((maze.rows, 0), "down")
+        assert not maze.is_valid_move((0, -1), "left")
+        assert not maze.is_valid_move((0, maze.cols), "right")
 
     def test_boundary_moves_blocked(self):
         """Moves at maze boundary should be blocked even without wall."""
         maze = Maze(Difficulty.EASY)
         maze.generate()
         # Top row can't move up
-        assert not maze.is_valid_move((0, 0), 'up')
+        assert not maze.is_valid_move((0, 0), "up")
         # Left column can't move left
-        assert not maze.is_valid_move((0, 0), 'left')
+        assert not maze.is_valid_move((0, 0), "left")
         # Bottom row can't move down
-        assert not maze.is_valid_move((maze.rows - 1, 0), 'down')
+        assert not maze.is_valid_move((maze.rows - 1, 0), "down")
         # Right column can't move right
-        assert not maze.is_valid_move((0, maze.cols - 1), 'right')
+        assert not maze.is_valid_move((0, maze.cols - 1), "right")
 
 
 class TestBFSDistances:

@@ -2,7 +2,8 @@
 
 import random
 from collections import deque
-from maze import Maze, Difficulty
+
+from maze import Difficulty, Maze
 from player import Player
 
 
@@ -19,14 +20,14 @@ def _find_path_bfs(maze, start_pos, goal_pos):
         if pos == goal_pos:
             return path
 
-        for direction in ['up', 'down', 'left', 'right']:
+        for direction in ["up", "down", "left", "right"]:
             if maze.is_valid_move(pos, direction):
                 row, col = pos
-                if direction == 'up':
+                if direction == "up":
                     new_pos = (row - 1, col)
-                elif direction == 'down':
+                elif direction == "down":
                     new_pos = (row + 1, col)
-                elif direction == 'left':
+                elif direction == "left":
                     new_pos = (row, col - 1)
                 else:
                     new_pos = (row, col + 1)
@@ -49,7 +50,7 @@ class TestPlayerNavigationInMaze:
         player = Player(maze.start_pos)
 
         # Find a valid move from start position
-        for direction in ['up', 'down', 'left', 'right']:
+        for direction in ["up", "down", "left", "right"]:
             if maze.is_valid_move(player.position, direction):
                 old_pos = player.position
                 player.move(direction)
@@ -63,7 +64,7 @@ class TestPlayerNavigationInMaze:
         player = Player((1, 1))
 
         # All directions should be blocked
-        for direction in ['up', 'down', 'left', 'right']:
+        for direction in ["up", "down", "left", "right"]:
             if not maze.is_valid_move(player.position, direction):
                 old_pos = player.position
                 # Player.move() doesn't check validity, so we check before moving
@@ -128,8 +129,9 @@ class TestMultipleMazeGenerations:
         maze2.generate()
 
         # Start or goal positions should differ (highly likely with different seeds)
-        different = (maze1.start_pos != maze2.start_pos or
-                     maze1.goal_pos != maze2.goal_pos)
+        different = (
+            maze1.start_pos != maze2.start_pos or maze1.goal_pos != maze2.goal_pos
+        )
         assert different
 
     def test_same_seed_produces_same_maze(self):
