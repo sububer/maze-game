@@ -73,3 +73,12 @@ uv run python -m pygbag --build .
 - Backtrack detection: retracing steps removes breadcrumbs
 - Configure in menu: toggle on/off, select shade (Light/Medium/Dark)
 - Runtime toggle with B key during gameplay
+
+### Timer
+- Tracks how long the player takes to solve the maze
+- Starts on first move (not when game loads)
+- Stops when the maze is solved
+- Displayed in upper right corner with retro 80's arcade font (Press Start 2P)
+- Format: MM:SS.T (minutes:seconds.tenths)
+- Always active (no toggle option)
+- Final time displayed prominently on win screen

@@ -28,3 +28,7 @@ BREADCRUMB_COLOR = PAC_COLOR  # Same yellow as player
 BREADCRUMB_LIGHT = 60
 BREADCRUMB_MEDIUM = 120
 BREADCRUMB_DARK = 180
+
+# timer
+TIMER_COLOR = PAC_COLOR
+TIMER_FONT_PATH = "assets/fonts/PressStart2P-Regular.ttf"
