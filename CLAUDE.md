@@ -61,6 +61,15 @@ uv run python -m pygbag --build .
 ### Controls
 - Arrow keys or WASD: Move player
 - W/S: Navigate menu (in addition to arrow keys)
+- Left/Right: Adjust settings values in menu
+- B: Toggle breadcrumb trail on/off (during gameplay)
 - R: Restart with new maze
 - ESC: Return to menu
-- Enter: Start game (from menu)
+- Enter: Start game or toggle settings (from menu)
+
+### Breadcrumb Trail
+- Optional visual trail showing the path taken through the maze
+- Fading effect: older breadcrumbs are more transparent, newer ones more visible
+- Backtrack detection: retracing steps removes breadcrumbs
+- Configure in menu: toggle on/off, select shade (Light/Medium/Dark)
+- Runtime toggle with B key during gameplay
