@@ -25,10 +25,10 @@ uv run pytest
 uv run pytest --cov --cov-report=term-missing
 
 # Run in browser (local dev server at localhost:8000)
-uv run pygbag .
+uv run python -m pygbag .
 
 # Build for web deployment
-uv run pygbag --build .
+uv run python -m pygbag --build .
 ```
 
 ## Architecture
