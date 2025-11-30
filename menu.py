@@ -25,9 +25,9 @@ class Menu:
     def handle_event(self, event: pygame.event.Event) -> str | None:
         """Handle menu input. Returns 'start' if game should start."""
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
+            if event.key == pygame.K_UP or event.key == pygame.K_w:
                 self.selected_index = (self.selected_index - 1) % len(self.DIFFICULTIES)
-            elif event.key == pygame.K_DOWN:
+            elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                 self.selected_index = (self.selected_index + 1) % len(self.DIFFICULTIES)
             elif event.key == pygame.K_RETURN:
                 return "start"
@@ -44,7 +44,7 @@ class Menu:
 
         # Instructions
         instructions = self.font_small.render(
-            "Use UP/DOWN to select, ENTER to start", True, (150, 150, 150)
+            "Use UP/DOWN or W/S to select, ENTER to start", True, (150, 150, 150)
         )
         inst_rect = instructions.get_rect(center=(cfg.WIDTH // 2, 180))
         surface.blit(instructions, inst_rect)
@@ -76,7 +76,7 @@ class Menu:
 
         # Controls hint at bottom
         controls = self.font_small.render(
-            "In game: Arrow keys to move, R to restart, ESC for menu",
+            "In game: Arrow keys or WASD to move, R to restart, ESC for menu",
             True,
             (100, 100, 100),
         )

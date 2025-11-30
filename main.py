@@ -70,13 +70,13 @@ async def main():
             elif state == GameState.PLAYING:
                 if event.type == pygame.KEYDOWN:
                     direction = None
-                    if event.key == pygame.K_LEFT:
+                    if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                         direction = "left"
-                    elif event.key == pygame.K_RIGHT:
+                    elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                         direction = "right"
-                    elif event.key == pygame.K_UP:
+                    elif event.key == pygame.K_UP or event.key == pygame.K_w:
                         direction = "up"
-                    elif event.key == pygame.K_DOWN:
+                    elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                         direction = "down"
                     elif event.key == pygame.K_r:
                         # Restart with same difficulty
