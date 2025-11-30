@@ -1,4 +1,5 @@
 import pygame
+
 import config as cfg
 from maze import Difficulty
 
@@ -29,7 +30,7 @@ class Menu:
             elif event.key == pygame.K_DOWN:
                 self.selected_index = (self.selected_index + 1) % len(self.DIFFICULTIES)
             elif event.key == pygame.K_RETURN:
-                return 'start'
+                return "start"
         return None
 
     def draw(self, surface: pygame.Surface) -> None:
@@ -42,7 +43,9 @@ class Menu:
         surface.blit(title, title_rect)
 
         # Instructions
-        instructions = self.font_small.render("Use UP/DOWN to select, ENTER to start", True, (150, 150, 150))
+        instructions = self.font_small.render(
+            "Use UP/DOWN to select, ENTER to start", True, (150, 150, 150)
+        )
         inst_rect = instructions.get_rect(center=(cfg.WIDTH // 2, 180))
         surface.blit(instructions, inst_rect)
 
@@ -67,10 +70,15 @@ class Menu:
             # Description
             desc_color = (200, 200, 200) if is_selected else (100, 100, 100)
             desc_text = self.font_small.render(desc, True, desc_color)
-            desc_rect = desc_text.get_rect(center=(cfg.WIDTH // 2, y_start + i * 80 + 30))
+            desc_y = y_start + i * 80 + 30
+            desc_rect = desc_text.get_rect(center=(cfg.WIDTH // 2, desc_y))
             surface.blit(desc_text, desc_rect)
 
         # Controls hint at bottom
-        controls = self.font_small.render("In game: Arrow keys to move, R to restart, ESC for menu", True, (100, 100, 100))
+        controls = self.font_small.render(
+            "In game: Arrow keys to move, R to restart, ESC for menu",
+            True,
+            (100, 100, 100),
+        )
         controls_rect = controls.get_rect(center=(cfg.WIDTH // 2, cfg.HEIGHT - 50))
         surface.blit(controls, controls_rect)

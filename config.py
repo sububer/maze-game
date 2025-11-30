@@ -3,10 +3,10 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 PAC_COLOR = (246, 255, 0)
 
-# display 
+# display
 WIDTH = 900
 HEIGHT = 900
-MASTHEAD = HEIGHT//14
+MASTHEAD = HEIGHT // 14
 PADDING = 5
 
 # maze

@@ -1,8 +1,10 @@
 import random
 from collections import deque
-from enum import Enum
 from dataclasses import dataclass
+from enum import Enum
+
 import pygame
+
 import config as cfg
 
 
@@ -26,6 +28,7 @@ DIFFICULTY_SETTINGS = {
 @dataclass
 class Cell:
     """Represents a single cell in the maze with 4 walls."""
+
     top: bool = True
     right: bool = True
     bottom: bool = True
@@ -56,19 +59,22 @@ class Maze:
         self.cells[row][col].visited = True
 
         # Get neighbors in random order
-        directions = [(0, 1, 'right', 'left'),    # right
-                      (0, -1, 'left', 'right'),   # left
-                      (-1, 0, 'top', 'bottom'),   # up
-                      (1, 0, 'bottom', 'top')]    # down
+        directions = [
+            (0, 1, "right", "left"),  # right
+            (0, -1, "left", "right"),  # left
+            (-1, 0, "top", "bottom"),  # up
+            (1, 0, "bottom", "top"),  # down
+        ]
         random.shuffle(directions)
 
         for dr, dc, wall, opposite_wall in directions:
             new_row, new_col = row + dr, col + dc
 
-            if (0 <= new_row < self.rows and
-                0 <= new_col < self.cols and
-                not self.cells[new_row][new_col].visited):
-
+            if (
+                0 <= new_row < self.rows
+                and 0 <= new_col < self.cols
+                and not self.cells[new_row][new_col].visited
+            ):
                 # Remove walls between current cell and neighbor
                 setattr(self.cells[row][col], wall, False)
                 setattr(self.cells[new_row][new_col], opposite_wall, False)
@@ -85,13 +91,15 @@ class Maze:
         for row in range(self.rows):
             for col in range(self.cols):
                 if col < self.cols - 1 and self.cells[row][col].right:
-                    internal_walls.append((row, col, 'right', row, col + 1, 'left'))
+                    internal_walls.append((row, col, "right", row, col + 1, "left"))
                 if row < self.rows - 1 and self.cells[row][col].bottom:
-                    internal_walls.append((row, col, 'bottom', row + 1, col, 'top'))
+                    internal_walls.append((row, col, "bottom", row + 1, col, "top"))
 
         # Remove a percentage of walls
         num_to_remove = len(internal_walls) * self.extra_removal // 100
-        walls_to_remove = random.sample(internal_walls, min(num_to_remove, len(internal_walls)))
+        walls_to_remove = random.sample(
+            internal_walls, min(num_to_remove, len(internal_walls))
+        )
 
         for r1, c1, wall1, r2, c2, wall2 in walls_to_remove:
             setattr(self.cells[r1][c1], wall1, False)
@@ -160,13 +168,13 @@ class Maze:
 
         cell = self.cells[row][col]
 
-        if direction == 'up':
+        if direction == "up":
             return not cell.top and row > 0
-        elif direction == 'down':
+        elif direction == "down":
             return not cell.bottom and row < self.rows - 1
-        elif direction == 'left':
+        elif direction == "left":
             return not cell.left and col > 0
-        elif direction == 'right':
+        elif direction == "right":
             return not cell.right and col < self.cols - 1
 
         return False
@@ -203,25 +211,45 @@ class Maze:
                 y = cfg.MASTHEAD + cfg.PADDING + row * cell_size
 
                 if cell.top:
-                    pygame.draw.line(surface, color,
-                                   (x, y), (x + cell_size, y), line_width)
+                    pygame.draw.line(
+                        surface, color, (x, y), (x + cell_size, y), line_width
+                    )
                 if cell.right:
-                    pygame.draw.line(surface, color,
-                                   (x + cell_size, y), (x + cell_size, y + cell_size), line_width)
+                    pygame.draw.line(
+                        surface,
+                        color,
+                        (x + cell_size, y),
+                        (x + cell_size, y + cell_size),
+                        line_width,
+                    )
                 if cell.bottom:
-                    pygame.draw.line(surface, color,
-                                   (x, y + cell_size), (x + cell_size, y + cell_size), line_width)
+                    pygame.draw.line(
+                        surface,
+                        color,
+                        (x, y + cell_size),
+                        (x + cell_size, y + cell_size),
+                        line_width,
+                    )
                 if cell.left:
-                    pygame.draw.line(surface, color,
-                                   (x, y), (x, y + cell_size), line_width)
+                    pygame.draw.line(
+                        surface, color, (x, y), (x, y + cell_size), line_width
+                    )
 
         # Draw start marker (green)
         start_x, start_y = self.grid_to_pixel(*self.start_pos)
-        pygame.draw.circle(surface, (0, 200, 0), (int(start_x), int(start_y)),
-                          int(cell_size / 4))
+        pygame.draw.circle(
+            surface, (0, 200, 0), (int(start_x), int(start_y)), int(cell_size / 4)
+        )
 
         # Draw goal marker (red)
         goal_x, goal_y = self.grid_to_pixel(*self.goal_pos)
-        pygame.draw.rect(surface, (200, 0, 0),
-                        (int(goal_x - cell_size/4), int(goal_y - cell_size/4),
-                         int(cell_size/2), int(cell_size/2)))
+        pygame.draw.rect(
+            surface,
+            (200, 0, 0),
+            (
+                int(goal_x - cell_size / 4),
+                int(goal_y - cell_size / 4),
+                int(cell_size / 2),
+                int(cell_size / 2),
+            ),
+        )

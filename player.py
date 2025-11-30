@@ -1,4 +1,5 @@
 import pygame
+
 import config as cfg
 
 
@@ -13,13 +14,13 @@ class Player:
 
     def move(self, direction: str) -> None:
         """Move player in the given direction. Assumes move is valid."""
-        if direction == 'up':
+        if direction == "up":
             self.row -= 1
-        elif direction == 'down':
+        elif direction == "down":
             self.row += 1
-        elif direction == 'left':
+        elif direction == "left":
             self.col -= 1
-        elif direction == 'right':
+        elif direction == "right":
             self.col += 1
 
     def draw(self, surface: pygame.Surface, maze) -> None:
