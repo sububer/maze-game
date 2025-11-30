@@ -47,11 +47,17 @@ class TestUpdatePath:
         update_path(path, (0, 0))  # Backtrack to start
         assert path == [(0, 0)]
 
-    def test_single_position_no_backtrack(self):
-        """With only one position, any move is forward."""
+    def test_same_position_no_duplicate(self):
+        """Moving to the same position should not append duplicate."""
         path = [(0, 0)]
-        update_path(path, (0, 0))  # Same position (edge case)
-        assert path == [(0, 0), (0, 0)]
+        update_path(path, (0, 0))  # Same position
+        assert path == [(0, 0)]
+
+    def test_empty_path_no_change(self):
+        """Empty path should remain empty."""
+        path = []
+        update_path(path, (0, 0))
+        assert path == []
 
     def test_move_to_visited_non_previous_cell(self):
         """Moving to a visited cell that's not the previous one appends."""

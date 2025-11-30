@@ -23,8 +23,11 @@ pygame.display.set_caption("MazeGame")
 clock = pygame.time.Clock()
 
 
-def update_path(path: list, new_pos: tuple) -> None:
+def update_path(path: list[tuple[int, int]], new_pos: tuple[int, int]) -> None:
     """Update path history with backtrack detection."""
+    if not path or new_pos == path[-1]:
+        # No path or same position - no change
+        return
     if len(path) >= 2 and new_pos == path[-2]:
         # Moving back to where we came from - backtracking
         path.pop()
@@ -35,8 +38,8 @@ def update_path(path: list, new_pos: tuple) -> None:
 
 def draw_breadcrumbs(
     surface: pygame.Surface,
-    path: list,
-    maze,
+    path: list[tuple[int, int]],
+    maze: "Maze",
     base_opacity: int,
 ) -> None:
     """Draw breadcrumb trail with fading effect (older = more transparent)."""
@@ -130,6 +133,7 @@ async def main():
                         maze.generate()
                         player = Player(maze.start_pos)
                         path_history = [maze.start_pos]
+                        breadcrumbs_enabled = menu.breadcrumbs_enabled
                     elif event.key == pygame.K_b:
                         # Toggle breadcrumbs
                         breadcrumbs_enabled = not breadcrumbs_enabled
@@ -152,6 +156,7 @@ async def main():
                         maze.generate()
                         player = Player(maze.start_pos)
                         path_history = [maze.start_pos]
+                        breadcrumbs_enabled = menu.breadcrumbs_enabled
                         state = GameState.PLAYING
                     elif event.key == pygame.K_ESCAPE:
                         state = GameState.MENU

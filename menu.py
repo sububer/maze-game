@@ -24,7 +24,7 @@ class Menu:
         self.breadcrumbs_enabled = True
         self.shade_index = 1  # Default to Medium
 
-        # Navigation: 0-3 = difficulties, 4 = breadcrumbs toggle, 5 = shade
+        # Navigation indices: difficulties first, then breadcrumbs toggle, then shade
         self.menu_items_count = len(self.DIFFICULTIES) + 2
 
     @property
