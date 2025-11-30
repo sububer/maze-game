@@ -63,8 +63,8 @@ class Maze:
             (0, 1, "right", "left"),  # right
             (0, -1, "left", "right"),  # left
             (-1, 0, "top", "bottom"),  # up
-            (1, 0, "bottom", "top"),
-        ]  # down
+            (1, 0, "bottom", "top"),  # down
+        ]
         random.shuffle(directions)
 
         for dr, dc, wall, opposite_wall in directions:
