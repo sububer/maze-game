@@ -1,3 +1,4 @@
+import asyncio
 from enum import Enum
 
 import pygame
@@ -45,7 +46,7 @@ def draw_win_screen(surface: pygame.Surface) -> None:
     surface.blit(hint_text, hint_rect)
 
 
-def main():
+async def main():
     running = True
     state = GameState.MENU
     menu = Menu()
@@ -120,9 +121,10 @@ def main():
 
         pygame.display.update()
         clock.tick(cfg.FPS)
+        await asyncio.sleep(0)  # Yield to browser event loop (required for pygbag)
 
     pygame.quit()
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
