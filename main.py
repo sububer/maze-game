@@ -1,4 +1,5 @@
 import asyncio
+import time
 from enum import Enum
 
 import pygame
@@ -22,6 +23,10 @@ pygame.display.set_caption("MazeGame")
 
 clock = pygame.time.Clock()
 
+# Load retro font for timer display
+timer_font_label = pygame.font.Font(cfg.TIMER_FONT_PATH, 12)
+timer_font_time = pygame.font.Font(cfg.TIMER_FONT_PATH, 20)
+
 
 def update_path(path: list[tuple[int, int]], new_pos: tuple[int, int]) -> None:
     """Update path history with backtrack detection."""
@@ -34,6 +39,28 @@ def update_path(path: list[tuple[int, int]], new_pos: tuple[int, int]) -> None:
     else:
         # New exploration
         path.append(new_pos)
+
+
+def format_time(elapsed: float) -> str:
+    """Format elapsed time as MM:SS.T (minutes:seconds.tenths)."""
+    minutes = int(elapsed // 60)
+    seconds = int(elapsed % 60)
+    tenths = int((elapsed * 10) % 10)
+    return f"{minutes:02d}:{seconds:02d}.{tenths}"
+
+
+def draw_timer(surface: pygame.Surface, elapsed: float) -> None:
+    """Draw the timer in the upper right corner."""
+    # "TIME" label
+    label = timer_font_label.render("TIME", True, cfg.TIMER_COLOR)
+    label_rect = label.get_rect(topright=(cfg.WIDTH - 20, 10))
+    surface.blit(label, label_rect)
+
+    # Time value
+    time_str = format_time(elapsed)
+    time_text = timer_font_time.render(time_str, True, cfg.TIMER_COLOR)
+    time_rect = time_text.get_rect(topright=(cfg.WIDTH - 20, 32))
+    surface.blit(time_text, time_rect)
 
 
 def draw_breadcrumbs(
@@ -68,8 +95,8 @@ def draw_breadcrumbs(
         surface.blit(crumb, (x - radius, y - radius))
 
 
-def draw_win_screen(surface: pygame.Surface) -> None:
-    """Draw the win overlay."""
+def draw_win_screen(surface: pygame.Surface, elapsed: float) -> None:
+    """Draw the win overlay with final time."""
     # Semi-transparent overlay
     overlay = pygame.Surface((cfg.WIDTH, cfg.HEIGHT), pygame.SRCALPHA)
     overlay.fill((0, 0, 0, 180))
@@ -80,14 +107,24 @@ def draw_win_screen(surface: pygame.Surface) -> None:
 
     # Win message
     win_text = font_large.render("YOU WIN!", True, (0, 255, 0))
-    win_rect = win_text.get_rect(center=(cfg.WIDTH // 2, cfg.HEIGHT // 2 - 50))
+    win_rect = win_text.get_rect(center=(cfg.WIDTH // 2, cfg.HEIGHT // 2 - 80))
     surface.blit(win_text, win_rect)
+
+    # Final time
+    time_str = format_time(elapsed)
+    time_label = timer_font_label.render("YOUR TIME", True, cfg.TIMER_COLOR)
+    time_label_rect = time_label.get_rect(center=(cfg.WIDTH // 2, cfg.HEIGHT // 2))
+    surface.blit(time_label, time_label_rect)
+
+    time_value = timer_font_time.render(time_str, True, cfg.TIMER_COLOR)
+    time_value_rect = time_value.get_rect(center=(cfg.WIDTH // 2, cfg.HEIGHT // 2 + 35))
+    surface.blit(time_value, time_value_rect)
 
     # Instructions
     hint_text = font_medium.render(
         "Press R to play again, ESC for menu", True, cfg.WHITE
     )
-    hint_rect = hint_text.get_rect(center=(cfg.WIDTH // 2, cfg.HEIGHT // 2 + 50))
+    hint_rect = hint_text.get_rect(center=(cfg.WIDTH // 2, cfg.HEIGHT // 2 + 100))
     surface.blit(hint_text, hint_rect)
 
 
@@ -99,6 +136,8 @@ async def main():
     player = None
     path_history = []
     breadcrumbs_enabled = True
+    timer_start = None
+    timer_end = None
 
     while running:
         for event in pygame.event.get():
@@ -114,6 +153,8 @@ async def main():
                     player = Player(maze.start_pos)
                     path_history = [maze.start_pos]
                     breadcrumbs_enabled = menu.breadcrumbs_enabled
+                    timer_start = None
+                    timer_end = None
                     state = GameState.PLAYING
 
             elif state == GameState.PLAYING:
@@ -134,6 +175,8 @@ async def main():
                         player = Player(maze.start_pos)
                         path_history = [maze.start_pos]
                         breadcrumbs_enabled = menu.breadcrumbs_enabled
+                        timer_start = None
+                        timer_end = None
                     elif event.key == pygame.K_b:
                         # Toggle breadcrumbs
                         breadcrumbs_enabled = not breadcrumbs_enabled
@@ -141,11 +184,16 @@ async def main():
                         state = GameState.MENU
 
                     if direction and maze.is_valid_move(player.position, direction):
+                        # Start timer on first move
+                        if timer_start is None:
+                            timer_start = time.time()
+
                         player.move(direction)
                         update_path(path_history, player.position)
 
                         # Check win condition
                         if player.position == maze.goal_pos:
+                            timer_end = time.time()
                             state = GameState.WON
 
             elif state == GameState.WON:
@@ -157,6 +205,8 @@ async def main():
                         player = Player(maze.start_pos)
                         path_history = [maze.start_pos]
                         breadcrumbs_enabled = menu.breadcrumbs_enabled
+                        timer_start = None
+                        timer_end = None
                         state = GameState.PLAYING
                     elif event.key == pygame.K_ESCAPE:
                         state = GameState.MENU
@@ -173,6 +223,9 @@ async def main():
                     display_surface, path_history, maze, menu.breadcrumb_opacity
                 )
             player.draw(display_surface, maze)
+            # Draw timer
+            elapsed = 0.0 if timer_start is None else time.time() - timer_start
+            draw_timer(display_surface, elapsed)
 
         elif state == GameState.WON:
             display_surface.fill(cfg.BLACK)
@@ -182,7 +235,13 @@ async def main():
                     display_surface, path_history, maze, menu.breadcrumb_opacity
                 )
             player.draw(display_surface, maze)
-            draw_win_screen(display_surface)
+            # Calculate final elapsed time
+            if timer_start is not None and timer_end is not None:
+                elapsed = timer_end - timer_start
+            else:
+                elapsed = 0.0
+            draw_timer(display_surface, elapsed)
+            draw_win_screen(display_surface, elapsed)
 
         pygame.display.update()
         clock.tick(cfg.FPS)
