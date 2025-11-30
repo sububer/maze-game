@@ -21,3 +21,10 @@ FPS = 60
 
 # player
 PLAYER_COLOR = PAC_COLOR
+
+# breadcrumbs
+BREADCRUMB_COLOR = PAC_COLOR  # Same yellow as player
+# Shade presets (max opacity values)
+BREADCRUMB_LIGHT = 60
+BREADCRUMB_MEDIUM = 120
+BREADCRUMB_DARK = 180

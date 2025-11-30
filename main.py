@@ -23,6 +23,48 @@ pygame.display.set_caption("MazeGame")
 clock = pygame.time.Clock()
 
 
+def update_path(path: list, new_pos: tuple) -> None:
+    """Update path history with backtrack detection."""
+    if len(path) >= 2 and new_pos == path[-2]:
+        # Moving back to where we came from - backtracking
+        path.pop()
+    else:
+        # New exploration
+        path.append(new_pos)
+
+
+def draw_breadcrumbs(
+    surface: pygame.Surface,
+    path: list,
+    maze,
+    base_opacity: int,
+) -> None:
+    """Draw breadcrumb trail with fading effect (older = more transparent)."""
+    if len(path) <= 1:
+        return
+
+    cell_size = maze.get_cell_size()
+    radius = int(cell_size / 6)  # Smaller than player (cell_size / 3)
+
+    # Minimum opacity so oldest breadcrumbs remain visible (30% of base)
+    min_opacity = max(20, int(base_opacity * 0.3))
+
+    # Draw all positions except the current one (last in path)
+    for i, (row, col) in enumerate(path[:-1]):
+        # Fade: older = lower opacity, newer = higher opacity
+        # Interpolate between min_opacity and base_opacity
+        fade = (i + 1) / len(path)
+        opacity = int(min_opacity + (base_opacity - min_opacity) * fade)
+
+        x, y = maze.grid_to_pixel(row, col)
+        # Create surface with alpha for transparency
+        crumb = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
+        pygame.draw.circle(
+            crumb, (*cfg.BREADCRUMB_COLOR, opacity), (radius, radius), radius
+        )
+        surface.blit(crumb, (x - radius, y - radius))
+
+
 def draw_win_screen(surface: pygame.Surface) -> None:
     """Draw the win overlay."""
     # Semi-transparent overlay
@@ -52,6 +94,8 @@ async def main():
     menu = Menu()
     maze = None
     player = None
+    path_history = []
+    breadcrumbs_enabled = True
 
     while running:
         for event in pygame.event.get():
@@ -65,6 +109,8 @@ async def main():
                     maze = Maze(menu.selected_difficulty)
                     maze.generate()
                     player = Player(maze.start_pos)
+                    path_history = [maze.start_pos]
+                    breadcrumbs_enabled = menu.breadcrumbs_enabled
                     state = GameState.PLAYING
 
             elif state == GameState.PLAYING:
@@ -83,11 +129,16 @@ async def main():
                         maze = Maze(menu.selected_difficulty)
                         maze.generate()
                         player = Player(maze.start_pos)
+                        path_history = [maze.start_pos]
+                    elif event.key == pygame.K_b:
+                        # Toggle breadcrumbs
+                        breadcrumbs_enabled = not breadcrumbs_enabled
                     elif event.key == pygame.K_ESCAPE:
                         state = GameState.MENU
 
                     if direction and maze.is_valid_move(player.position, direction):
                         player.move(direction)
+                        update_path(path_history, player.position)
 
                         # Check win condition
                         if player.position == maze.goal_pos:
@@ -100,6 +151,7 @@ async def main():
                         maze = Maze(menu.selected_difficulty)
                         maze.generate()
                         player = Player(maze.start_pos)
+                        path_history = [maze.start_pos]
                         state = GameState.PLAYING
                     elif event.key == pygame.K_ESCAPE:
                         state = GameState.MENU
@@ -111,11 +163,19 @@ async def main():
         elif state == GameState.PLAYING:
             display_surface.fill(cfg.BLACK)
             maze.draw(display_surface)
+            if breadcrumbs_enabled:
+                draw_breadcrumbs(
+                    display_surface, path_history, maze, menu.breadcrumb_opacity
+                )
             player.draw(display_surface, maze)
 
         elif state == GameState.WON:
             display_surface.fill(cfg.BLACK)
             maze.draw(display_surface)
+            if breadcrumbs_enabled:
+                draw_breadcrumbs(
+                    display_surface, path_history, maze, menu.breadcrumb_opacity
+                )
             player.draw(display_surface, maze)
             draw_win_screen(display_surface)
 
