@@ -59,7 +59,8 @@ uv run python -m pygbag --build .
 - `GameState.WON` - Win overlay displayed
 
 ### Controls
-- Arrow keys: Move player
+- Arrow keys or WASD: Move player
+- W/S: Navigate menu (in addition to arrow keys)
 - R: Restart with new maze
 - ESC: Return to menu
 - Enter: Start game (from menu)
