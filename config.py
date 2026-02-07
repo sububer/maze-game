@@ -32,3 +32,6 @@ BREADCRUMB_DARK = 180
 # timer
 TIMER_COLOR = PAC_COLOR
 TIMER_FONT_PATH = "assets/fonts/PressStart2P-Regular.ttf"
+
+# moves counter
+MOVES_COLOR = PAC_COLOR

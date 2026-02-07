@@ -82,3 +82,11 @@ uv run python -m pygbag --build .
 - Format: MM:SS.T (minutes:seconds.tenths)
 - Always active (no toggle option)
 - Final time displayed prominently on win screen
+
+### Moves Counter
+- Counts the total number of valid moves made by the player
+- Increments on each valid move (does not count wall collisions)
+- Includes backtracking moves in the count
+- Displayed in upper left corner with retro 80's arcade font (Press Start 2P)
+- Resets on restart (R key) or new game from menu
+- Final move count displayed on win screen alongside time
