@@ -80,9 +80,7 @@ def draw_moves(surface: pygame.Surface, move_count: int) -> None:
     surface.blit(count_text, count_rect)
 
 
-def try_move(
-    maze: "Maze", player: "Player", direction: str
-) -> bool:
+def try_move(maze: "Maze", player: "Player", direction: str) -> bool:
     """Attempt to move the player in the given direction.
 
     Returns True if the move was valid and executed, False otherwise.
