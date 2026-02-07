@@ -35,6 +35,9 @@ timer_font_time = pygame.font.Font(cfg.TIMER_FONT_PATH, 20)
 moves_font_label = pygame.font.Font(cfg.TIMER_FONT_PATH, 12)
 moves_font_value = pygame.font.Font(cfg.TIMER_FONT_PATH, 20)
 
+# Font for tag mode HUD
+tag_hud_font = pygame.font.Font(None, 32)
+
 
 def update_path(path: list[tuple[int, int]], new_pos: tuple[int, int]) -> None:
     """Update path history with backtrack detection."""
@@ -191,7 +194,7 @@ def draw_tag_countdown(surface: pygame.Surface, remaining: float) -> None:
 
 def draw_tag_hud(surface: pygame.Surface, tag_game: TagGame) -> None:
     """Draw tag mode HUD: scores (upper-left), round (upper-center)."""
-    font = pygame.font.Font(None, 32)
+    font = tag_hud_font
 
     # Scores - upper left
     p1_color = cfg.TAGGER_COLOR if tag_game.tagger_player_num == 1 else cfg.RUNNER_COLOR

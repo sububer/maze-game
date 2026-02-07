@@ -128,10 +128,7 @@ class TagGame:
         self.round_result = result
         if self.round_start_time is not None:
             delta = time.time() - self.round_start_time
-            if result == "timeout":
-                self.round_elapsed = min(delta, cfg.TAG_TIME_LIMIT)
-            else:
-                self.round_elapsed = delta
+            self.round_elapsed = min(delta, cfg.TAG_TIME_LIMIT)
 
         if result == "tagged":
             # Tagger wins the round
