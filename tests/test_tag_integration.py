@@ -210,9 +210,7 @@ class TestMazeTagFeatures:
         standard_walls = 0
         for row in maze_standard.cells:
             for cell in row:
-                standard_walls += sum(
-                    [cell.top, cell.right, cell.bottom, cell.left]
-                )
+                standard_walls += sum([cell.top, cell.right, cell.bottom, cell.left])
 
         # Generate tag maze (same difficulty + extra loop removal)
         random.seed(42)

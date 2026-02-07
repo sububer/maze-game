@@ -204,9 +204,7 @@ def draw_tag_hud(surface: pygame.Surface, tag_game: TagGame) -> None:
     surface.blit(sep_text, (20 + p1_text.get_width() + 8, 10))
 
     p2_text = font.render(f"P2: {tag_game.scores[1]}", True, p2_color)
-    surface.blit(
-        p2_text, (20 + p1_text.get_width() + 8 + sep_text.get_width() + 8, 10)
-    )
+    surface.blit(p2_text, (20 + p1_text.get_width() + 8 + sep_text.get_width() + 8, 10))
 
     # Round number - upper center
     round_text = font.render(f"Round {tag_game.round_num}", True, cfg.WHITE)
@@ -436,9 +434,7 @@ async def main():
             elif state == GameState.TAG_GAME_OVER:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_r:
-                        tag_game = TagGame(
-                            menu.tag_difficulty, menu.tag_win_score
-                        )
+                        tag_game = TagGame(menu.tag_difficulty, menu.tag_win_score)
                         tag_game.start_round()
                         state = GameState.TAG_PLAYING
                     elif event.key == pygame.K_ESCAPE:

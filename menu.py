@@ -122,9 +122,9 @@ class Menu:
             tag_offset = self.selected_index - 1  # offset past mode selector
             win_idx = len(self.TAG_DIFFICULTIES)
             if tag_offset == win_idx:
-                self.tag_win_score_index = (
-                    self.tag_win_score_index + direction
-                ) % len(cfg.TAG_WIN_SCORES)
+                self.tag_win_score_index = (self.tag_win_score_index + direction) % len(
+                    cfg.TAG_WIN_SCORES
+                )
 
     def _handle_enter(self) -> str | None:
         """Handle enter key press."""
@@ -231,9 +231,7 @@ class Menu:
         color = cfg.PAC_COLOR if is_selected else cfg.WHITE
         prefix = "> " if is_selected else "  "
         on_off = "ON" if self.breadcrumbs_enabled else "OFF"
-        bc_text = self.font_medium.render(
-            f"{prefix}Breadcrumbs: {on_off}", True, color
-        )
+        bc_text = self.font_medium.render(f"{prefix}Breadcrumbs: {on_off}", True, color)
         bc_rect = bc_text.get_rect(center=(cfg.WIDTH // 2, settings_y + 50))
         surface.blit(bc_text, bc_rect)
 
