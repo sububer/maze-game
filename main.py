@@ -248,8 +248,6 @@ def draw_tag_round_end(surface: pygame.Surface, tag_game: TagGame) -> None:
     surface.blit(elapsed_text, elapsed_rect)
 
     # Scores
-    p1_color = cfg.TAGGER_COLOR if tag_game.tagger_player_num == 1 else cfg.RUNNER_COLOR
-    p2_color = cfg.TAGGER_COLOR if tag_game.tagger_player_num == 2 else cfg.RUNNER_COLOR
     score_text = font_medium.render(
         f"P1: {tag_game.scores[0]}  |  P2: {tag_game.scores[1]}", True, cfg.WHITE
     )

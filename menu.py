@@ -57,7 +57,8 @@ class Menu:
     def selected_difficulty(self) -> Difficulty:
         if self.game_mode == "Solo":
             # Offset by 1 for mode selector row
-            diff_index = max(0, min(self.selected_index - 1, len(self.DIFFICULTIES) - 1))
+            diff_index = min(self.selected_index - 1, len(self.DIFFICULTIES) - 1)
+            diff_index = max(0, diff_index)
             return self.DIFFICULTIES[diff_index][0]
         else:
             return self.tag_difficulty
