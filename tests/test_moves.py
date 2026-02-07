@@ -1,8 +1,9 @@
-"""Tests for moves counter functionality."""
+"""Tests for moves counter functionality using the production try_move function."""
 
 import random
 from collections import deque
 
+from main import try_move
 from maze import Difficulty, Maze
 from player import Player
 
@@ -39,11 +40,61 @@ def _find_path_bfs(maze, start_pos, goal_pos):
     return None
 
 
-class TestMovesCounting:
-    """Tests for the moves counter logic."""
+class TestTryMove:
+    """Tests for the try_move function."""
 
-    def test_move_count_increments_on_valid_move(self):
-        """Move count should increment for each valid move."""
+    def test_valid_move_returns_true(self):
+        """try_move should return True for a valid move."""
+        random.seed(42)
+        maze = Maze(Difficulty.EASY)
+        maze.generate()
+        player = Player(maze.start_pos)
+
+        for direction in ["up", "down", "left", "right"]:
+            if maze.is_valid_move(player.position, direction):
+                assert try_move(maze, player, direction) is True
+                break
+
+    def test_valid_move_updates_position(self):
+        """try_move should update the player position on valid move."""
+        random.seed(42)
+        maze = Maze(Difficulty.EASY)
+        maze.generate()
+        player = Player(maze.start_pos)
+        old_pos = player.position
+
+        for direction in ["up", "down", "left", "right"]:
+            if maze.is_valid_move(player.position, direction):
+                try_move(maze, player, direction)
+                assert player.position != old_pos
+                break
+
+    def test_invalid_move_returns_false(self):
+        """try_move should return False when blocked by a wall."""
+        maze = Maze(Difficulty.EASY)
+        # Don't generate - all walls intact
+        player = Player((1, 1))
+
+        for direction in ["up", "down", "left", "right"]:
+            assert try_move(maze, player, direction) is False
+
+    def test_invalid_move_preserves_position(self):
+        """try_move should not change position when blocked by a wall."""
+        maze = Maze(Difficulty.EASY)
+        player = Player((1, 1))
+        old_pos = player.position
+
+        for direction in ["up", "down", "left", "right"]:
+            try_move(maze, player, direction)
+
+        assert player.position == old_pos
+
+
+class TestMovesCounting:
+    """Tests for counting moves using try_move."""
+
+    def test_count_increments_only_on_valid_moves(self):
+        """Move count should only increment when try_move returns True."""
         random.seed(42)
         maze = Maze(Difficulty.EASY)
         maze.generate()
@@ -51,30 +102,27 @@ class TestMovesCounting:
 
         move_count = 0
         for direction in ["up", "down", "left", "right"]:
-            if maze.is_valid_move(player.position, direction):
-                player.move(direction)
+            if try_move(maze, player, direction):
                 move_count += 1
-                break
 
-        assert move_count == 1
+        # At least one direction should be valid from start
+        assert move_count >= 1
 
-    def test_move_count_does_not_increment_on_invalid_move(self):
-        """Move count should NOT increment when move is blocked by wall."""
+    def test_count_does_not_increment_on_wall_collisions(self):
+        """Move count should stay zero when all moves are blocked."""
         maze = Maze(Difficulty.EASY)
         # Don't generate - all walls intact
         player = Player((1, 1))
 
         move_count = 0
         for direction in ["up", "down", "left", "right"]:
-            if maze.is_valid_move(player.position, direction):
-                player.move(direction)
+            if try_move(maze, player, direction):
                 move_count += 1
 
-        # All walls intact, no valid moves should exist
         assert move_count == 0
 
-    def test_move_count_matches_solution_length(self):
-        """Move count should equal the number of moves in the solution path."""
+    def test_count_matches_solution_length(self):
+        """Move count should equal solution path length."""
         random.seed(123)
         maze = Maze(Difficulty.EASY)
         maze.generate()
@@ -85,61 +133,41 @@ class TestMovesCounting:
 
         move_count = 0
         for direction in solution:
-            assert maze.is_valid_move(player.position, direction)
-            player.move(direction)
-            move_count += 1
+            if try_move(maze, player, direction):
+                move_count += 1
 
         assert player.position == maze.goal_pos
         assert move_count == len(solution)
 
-    def test_move_count_resets_to_zero(self):
-        """Move count should be resettable to zero (simulating restart)."""
+    def test_count_includes_backtracking(self):
+        """Move count should count all moves including backtracking."""
         random.seed(42)
         maze = Maze(Difficulty.EASY)
         maze.generate()
         player = Player(maze.start_pos)
 
-        move_count = 0
-        for direction in ["up", "down", "left", "right"]:
-            if maze.is_valid_move(player.position, direction):
-                player.move(direction)
-                move_count += 1
-
-        assert move_count > 0
-
-        # Simulate restart
-        move_count = 0
-        assert move_count == 0
-
-    def test_move_count_includes_backtracking(self):
-        """Move count should count all moves, including backtracking."""
-        random.seed(42)
-        maze = Maze(Difficulty.EASY)
-        maze.generate()
-        player = Player(maze.start_pos)
-
-        # Find a valid direction to move
+        # Find a valid direction
         forward_dir = None
         for direction in ["up", "down", "left", "right"]:
             if maze.is_valid_move(player.position, direction):
                 forward_dir = direction
                 break
-
         assert forward_dir is not None
 
-        # Move forward
         move_count = 0
-        player.move(forward_dir)
-        move_count += 1
+        reverse = {
+            "up": "down",
+            "down": "up",
+            "left": "right",
+            "right": "left",
+        }
 
-        # Determine reverse direction
-        reverse = {"up": "down", "down": "up", "left": "right", "right": "left"}
-        back_dir = reverse[forward_dir]
-
-        # Move back (backtrack)
-        if maze.is_valid_move(player.position, back_dir):
-            player.move(back_dir)
+        # Move forward
+        if try_move(maze, player, forward_dir):
             move_count += 1
 
-        # Both moves should be counted
+        # Move back
+        if try_move(maze, player, reverse[forward_dir]):
+            move_count += 1
+
         assert move_count == 2

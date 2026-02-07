@@ -80,6 +80,19 @@ def draw_moves(surface: pygame.Surface, move_count: int) -> None:
     surface.blit(count_text, count_rect)
 
 
+def try_move(
+    maze: "Maze", player: "Player", direction: str
+) -> bool:
+    """Attempt to move the player in the given direction.
+
+    Returns True if the move was valid and executed, False otherwise.
+    """
+    if maze.is_valid_move(player.position, direction):
+        player.move(direction)
+        return True
+    return False
+
+
 def draw_breadcrumbs(
     surface: pygame.Surface,
     path: list[tuple[int, int]],
@@ -216,12 +229,11 @@ async def main():
                     elif event.key == pygame.K_ESCAPE:
                         state = GameState.MENU
 
-                    if direction and maze.is_valid_move(player.position, direction):
+                    if direction and try_move(maze, player, direction):
                         # Start timer on first move
                         if timer_start is None:
                             timer_start = time.time()
 
-                        player.move(direction)
                         move_count += 1
                         update_path(path_history, player.position)
 
