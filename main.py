@@ -225,12 +225,19 @@ def draw_tag_round_end(surface: pygame.Surface, tag_game: TagGame) -> None:
     cy = cfg.HEIGHT // 2
 
     # Result header
+    runner_num = 2 if tag_game.tagger_player_num == 1 else 1
     if tag_game.round_result == "tagged":
         header = font_large.render("TAGGED!", True, cfg.TAGGER_COLOR)
+        scorer = font_medium.render(
+            f"P{tag_game.tagger_player_num} scores!", True, cfg.TAGGER_COLOR
+        )
     else:
         header = font_large.render("TIME'S UP!", True, cfg.RUNNER_COLOR)
+        scorer = font_medium.render(f"P{runner_num} survives!", True, cfg.RUNNER_COLOR)
     header_rect = header.get_rect(center=(cfg.WIDTH // 2, cy - 100))
     surface.blit(header, header_rect)
+    scorer_rect = scorer.get_rect(center=(cfg.WIDTH // 2, cy - 60))
+    surface.blit(scorer, scorer_rect)
 
     # Tagger moves and elapsed time
     moves_text = font_small.render(
@@ -415,6 +422,10 @@ async def main():
 
                     if p2_dir:
                         tag_game.process_move(2, p2_dir)
+
+                    # Check if a tag ended the round
+                    if not tag_game.round_active:
+                        state = GameState.TAG_ROUND_END
 
                     if event.key == pygame.K_ESCAPE:
                         state = GameState.MENU
