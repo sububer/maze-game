@@ -35,3 +35,10 @@ TIMER_FONT_PATH = "assets/fonts/PressStart2P-Regular.ttf"
 
 # moves counter
 MOVES_COLOR = PAC_COLOR
+
+# tag mode
+TAGGER_COLOR = (255, 69, 0)  # orange-red
+RUNNER_COLOR = (0, 191, 255)  # sky blue
+TAG_TIME_LIMIT = 120  # seconds per round
+TAG_LOOP_PERCENT = 10  # extra wall removal for chase dynamics
+TAG_WIN_SCORES = [1, 3, 5]  # selectable "first to N" options

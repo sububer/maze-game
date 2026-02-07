@@ -158,27 +158,28 @@ class TestMenuSettingsNavigation:
         pygame.quit()
 
     def test_menu_items_count_includes_settings(self):
-        """Menu should have difficulty options plus 2 settings."""
+        """Menu should have mode selector + difficulty options + 2 settings."""
         menu = Menu()
-        assert menu.menu_items_count == len(menu.DIFFICULTIES) + 2
+        # 1 (mode selector) + 4 difficulties + 2 settings = 7
+        assert menu.menu_items_count == 1 + len(menu.DIFFICULTIES) + 2
 
     def test_navigate_to_breadcrumb_toggle(self):
         """Should be able to navigate to breadcrumb toggle."""
         menu = Menu()
-        # Navigate down past difficulties
-        for _ in range(len(menu.DIFFICULTIES)):
+        # Navigate down past mode selector + difficulties
+        for _ in range(1 + len(menu.DIFFICULTIES)):
             event = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_DOWN)
             menu.handle_event(event)
-        assert menu.selected_index == len(menu.DIFFICULTIES)
+        assert menu.selected_index == 1 + len(menu.DIFFICULTIES)
 
     def test_navigate_to_shade_selector(self):
         """Should be able to navigate to shade selector."""
         menu = Menu()
-        # Navigate down past difficulties and breadcrumb toggle
-        for _ in range(len(menu.DIFFICULTIES) + 1):
+        # Navigate down past mode selector + difficulties + breadcrumb toggle
+        for _ in range(1 + len(menu.DIFFICULTIES) + 1):
             event = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_DOWN)
             menu.handle_event(event)
-        assert menu.selected_index == len(menu.DIFFICULTIES) + 1
+        assert menu.selected_index == 1 + len(menu.DIFFICULTIES) + 1
 
     def test_navigate_wraps_around(self):
         """Navigation should wrap from last item to first."""
@@ -191,7 +192,7 @@ class TestMenuSettingsNavigation:
     def test_enter_on_breadcrumb_toggles(self):
         """Enter on breadcrumb setting should toggle it."""
         menu = Menu()
-        menu.selected_index = len(menu.DIFFICULTIES)  # Breadcrumb toggle
+        menu.selected_index = 1 + len(menu.DIFFICULTIES)  # Breadcrumb toggle
         initial = menu.breadcrumbs_enabled
         event = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN)
         menu.handle_event(event)
@@ -200,7 +201,7 @@ class TestMenuSettingsNavigation:
     def test_enter_on_shade_cycles(self):
         """Enter on shade setting should cycle to next shade."""
         menu = Menu()
-        menu.selected_index = len(menu.DIFFICULTIES) + 1  # Shade selector
+        menu.selected_index = 1 + len(menu.DIFFICULTIES) + 1  # Shade selector
         menu.shade_index = 0
         event = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN)
         menu.handle_event(event)
@@ -209,7 +210,7 @@ class TestMenuSettingsNavigation:
     def test_left_on_breadcrumb_toggles(self):
         """Left arrow on breadcrumb setting should toggle it."""
         menu = Menu()
-        menu.selected_index = len(menu.DIFFICULTIES)
+        menu.selected_index = 1 + len(menu.DIFFICULTIES)
         initial = menu.breadcrumbs_enabled
         event = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_LEFT)
         menu.handle_event(event)
@@ -218,7 +219,7 @@ class TestMenuSettingsNavigation:
     def test_right_on_shade_cycles_forward(self):
         """Right arrow on shade setting should cycle forward."""
         menu = Menu()
-        menu.selected_index = len(menu.DIFFICULTIES) + 1
+        menu.selected_index = 1 + len(menu.DIFFICULTIES) + 1
         menu.shade_index = 0
         event = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RIGHT)
         menu.handle_event(event)
@@ -227,7 +228,7 @@ class TestMenuSettingsNavigation:
     def test_left_on_shade_cycles_backward(self):
         """Left arrow on shade setting should cycle backward."""
         menu = Menu()
-        menu.selected_index = len(menu.DIFFICULTIES) + 1
+        menu.selected_index = 1 + len(menu.DIFFICULTIES) + 1
         menu.shade_index = 1
         event = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_LEFT)
         menu.handle_event(event)
@@ -236,7 +237,7 @@ class TestMenuSettingsNavigation:
     def test_enter_on_difficulty_starts_game(self):
         """Enter on difficulty should return 'start'."""
         menu = Menu()
-        menu.selected_index = 0  # First difficulty
+        menu.selected_index = 1  # First difficulty (index 0 is mode selector)
         event = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN)
         result = menu.handle_event(event)
         assert result == "start"
@@ -244,7 +245,7 @@ class TestMenuSettingsNavigation:
     def test_enter_on_settings_does_not_start_game(self):
         """Enter on settings should not return 'start'."""
         menu = Menu()
-        menu.selected_index = len(menu.DIFFICULTIES)  # Breadcrumb toggle
+        menu.selected_index = 1 + len(menu.DIFFICULTIES)  # Breadcrumb toggle
         event = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN)
         result = menu.handle_event(event)
         assert result is None
@@ -252,7 +253,7 @@ class TestMenuSettingsNavigation:
     def test_selected_difficulty_clamped_when_on_settings(self):
         """selected_difficulty should return last difficulty when on settings."""
         menu = Menu()
-        menu.selected_index = len(menu.DIFFICULTIES) + 1  # Shade selector
+        menu.selected_index = 1 + len(menu.DIFFICULTIES) + 1  # Shade selector
         # Should return the last difficulty, not error
         difficulty = menu.selected_difficulty
         assert difficulty == menu.DIFFICULTIES[-1][0]
