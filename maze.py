@@ -85,6 +85,12 @@ class Maze:
         """Remove additional walls to create loops (makes maze easier)."""
         if self.extra_removal <= 0:
             return
+        self.remove_extra_walls_percent(self.extra_removal)
+
+    def remove_extra_walls_percent(self, percent: int) -> None:
+        """Remove a percentage of internal walls to create loops."""
+        if percent <= 0:
+            return
 
         # Collect all internal walls
         internal_walls = []
@@ -96,7 +102,7 @@ class Maze:
                     internal_walls.append((row, col, "bottom", row + 1, col, "top"))
 
         # Remove a percentage of walls
-        num_to_remove = len(internal_walls) * self.extra_removal // 100
+        num_to_remove = len(internal_walls) * percent // 100
         walls_to_remove = random.sample(
             internal_walls, min(num_to_remove, len(internal_walls))
         )
@@ -104,6 +110,18 @@ class Maze:
         for r1, c1, wall1, r2, c2, wall2 in walls_to_remove:
             setattr(self.cells[r1][c1], wall1, False)
             setattr(self.cells[r2][c2], wall2, False)
+
+    def place_two_players(self) -> tuple[tuple[int, int], tuple[int, int]]:
+        """Find two maximally distant positions using BFS."""
+        # Start BFS from a random cell to find the farthest cell
+        start = (random.randint(0, self.rows - 1), random.randint(0, self.cols - 1))
+        distances = self._bfs_distances(start)
+        # Farthest cell from the random start
+        pos1 = max(distances.items(), key=lambda x: x[1])[0]
+        # Farthest cell from pos1
+        distances2 = self._bfs_distances(pos1)
+        pos2 = max(distances2.items(), key=lambda x: x[1])[0]
+        return pos1, pos2
 
     def _place_start_and_goal(self) -> None:
         """Place start and goal at random positions with good distance."""
@@ -196,7 +214,9 @@ class Maze:
         y = cfg.MASTHEAD + cfg.PADDING + row * cell_size + cell_size / 2
         return (x, y)
 
-    def draw(self, surface: pygame.Surface, color: tuple = None) -> None:
+    def draw(
+        self, surface: pygame.Surface, color: tuple = None, draw_markers: bool = True
+    ) -> None:
         """Draw the maze walls on the given surface."""
         if color is None:
             color = cfg.MAZE_COLOR
@@ -234,6 +254,9 @@ class Maze:
                     pygame.draw.line(
                         surface, color, (x, y), (x, y + cell_size), line_width
                     )
+
+        if not draw_markers:
+            return
 
         # Draw start marker (green)
         start_x, start_y = self.grid_to_pixel(*self.start_pos)

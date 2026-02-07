@@ -1,6 +1,6 @@
 # Maze Game
 
-A maze game built with Pygame featuring random maze generation, multiple difficulty levels, and player navigation.
+A maze game built with Pygame featuring random maze generation, multiple difficulty levels, player navigation, and a 2-player tag mode.
 
 ## Features
 
@@ -10,8 +10,9 @@ A maze game built with Pygame featuring random maze generation, multiple difficu
 - **Path complexity control** - easier difficulties have more alternate paths
 - **Timer** - tracks solving time from first move, displayed in retro arcade font (MM:SS.T)
 - **Moves counter** - counts valid moves during gameplay, displayed alongside the timer
-- **Breadcrumb trail** - optional fading trail showing your path, with backtrack detection
+- **Breadcrumb trail** - optional fading trail showing your path, with backtrack detection and configurable shade (Light/Medium/Dark)
 - **Win screen** - shows final time and move count when the maze is solved
+- **2-player tag mode** - one player chases another through large mazes with loops (see below)
 
 ## Requirements
 
@@ -37,14 +38,32 @@ uv run python main.py
 
 ## Controls
 
+### Menu
+
 | Key | Action |
 |-----|--------|
-| Arrow keys / WASD | Move player |
-| B | Toggle breadcrumb trail on/off |
+| Up/Down or W/S | Navigate menu |
+| Left/Right | Switch game mode, adjust settings |
+| Enter | Start game or toggle setting |
+
+### Solo Mode
+
+| Key | Action |
+|-----|--------|
+| Arrow keys or WASD | Move player |
+| B | Toggle breadcrumb trail |
 | R | Restart with new maze |
 | ESC | Return to menu |
-| Enter | Start game / toggle settings (from menu) |
-| Left/Right | Adjust settings values (from menu) |
+
+### Tag Mode
+
+| Key | Action |
+|-----|--------|
+| WASD | Move Player 1 |
+| Arrow keys | Move Player 2 |
+| ESC | Return to menu |
+| Enter | Next round (round end) |
+| R | Rematch (game over) |
 
 ## Development
 
@@ -75,17 +94,20 @@ maze-game/
 ├── main.py          # Main entry point, game loop, state machine
 ├── maze.py          # Maze generation (recursive backtracking) & data structures
 ├── player.py        # Player state and movement
-├── menu.py          # Difficulty selection menu
+├── menu.py          # Mode/difficulty selection menu
+├── tag_game.py      # 2-player tag mode logic
 ├── config.py        # Game constants (dimensions, colors, etc.)
 ├── utils.py         # Helper functions
 ├── assets/fonts/    # Retro arcade font (Press Start 2P)
 ├── tests/           # Test suite
-│   ├── test_maze.py        # Maze unit tests
-│   ├── test_player.py      # Player unit tests
-│   ├── test_moves.py       # Moves counter tests
-│   ├── test_timer.py       # Timer tests
-│   ├── test_breadcrumbs.py # Breadcrumb trail tests
-│   └── test_integration.py # Integration tests
+│   ├── test_maze.py            # Maze unit tests
+│   ├── test_player.py          # Player unit tests
+│   ├── test_moves.py           # Moves counter tests
+│   ├── test_breadcrumbs.py     # Breadcrumb trail tests
+│   ├── test_timer.py           # Timer formatting tests
+│   ├── test_tag_game.py        # Tag mode unit tests
+│   ├── test_tag_integration.py # Tag mode integration tests
+│   └── test_integration.py     # Solo mode integration tests
 ├── pyproject.toml   # Project configuration
 └── README.md
 ```
@@ -110,6 +132,19 @@ Difficulty affects both maze size and complexity:
 ### Start/Goal Placement
 
 Start and goal positions are randomly placed with a minimum distance requirement (60% of the maximum possible path length) to ensure challenging gameplay.
+
+## Tag Mode
+
+Tag mode is a 2-player game where one player (the **tagger**) chases the other (the **runner**) through large mazes.
+
+- Select **Tag** mode from the menu using Left/Right on the mode selector
+- Choose **Hard** or **Very Hard** difficulty and a **First to N** win target (1, 3, or 5)
+- **Tagger** (orange-red, labeled "IT") tries to catch the **runner** (sky blue) within a 2-minute countdown
+- If tagged, the tagger scores a point; if time runs out, the runner scores
+- Roles swap each round; first player to the target score wins
+- Mazes have extra loops removed for better chase dynamics
+- Players start at maximally distant positions
+- HUD shows scores, round number, and countdown timer (turns red under 30s)
 
 ## License
 
