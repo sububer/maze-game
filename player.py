@@ -4,7 +4,7 @@ import config as cfg
 
 
 class Player:
-    _label_font = None
+    _font_cache: dict[int, pygame.font.Font] = {}
 
     def __init__(
         self, start_pos: tuple[int, int], color: tuple = None, label: str = None
@@ -36,10 +36,10 @@ class Player:
         pygame.draw.circle(surface, self.color, (int(x), int(y)), radius)
 
         if draw_label and self.label:
-            if Player._label_font is None:
-                Player._label_font = pygame.font.Font(None, 20)
             font_size = max(10, int(cell_size / 3))
-            font = pygame.font.Font(None, font_size)
+            if font_size not in Player._font_cache:
+                Player._font_cache[font_size] = pygame.font.Font(None, font_size)
+            font = Player._font_cache[font_size]
             label_surface = font.render(self.label, True, cfg.WHITE)
             label_rect = label_surface.get_rect(center=(int(x), int(y) - radius - 6))
             surface.blit(label_surface, label_rect)
