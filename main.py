@@ -139,11 +139,15 @@ def draw_win_screen(surface: pygame.Surface, elapsed: float, move_count: int) ->
 
     # Final move count
     moves_label = moves_font_label.render("YOUR MOVES", True, cfg.MOVES_COLOR)
-    moves_label_rect = moves_label.get_rect(center=(cfg.WIDTH // 2, cfg.HEIGHT // 2 + 45))
+    moves_label_rect = moves_label.get_rect(
+        center=(cfg.WIDTH // 2, cfg.HEIGHT // 2 + 45)
+    )
     surface.blit(moves_label, moves_label_rect)
 
     moves_value = moves_font_value.render(str(move_count), True, cfg.MOVES_COLOR)
-    moves_value_rect = moves_value.get_rect(center=(cfg.WIDTH // 2, cfg.HEIGHT // 2 + 80))
+    moves_value_rect = moves_value.get_rect(
+        center=(cfg.WIDTH // 2, cfg.HEIGHT // 2 + 80)
+    )
     surface.blit(moves_value, moves_value_rect)
 
     # Instructions
